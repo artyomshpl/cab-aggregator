@@ -1,10 +1,10 @@
-package com.modsen.service;
+package com.modsen.driverservice.service;
 
-import com.modsen.model.Driver;
+import com.modsen.driverservice.model.Driver;
+import com.modsen.driverservice.repository.DriverRepository;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
-import com.modsen.repository.DriverRepository;
-import com.modsen.service.impl.DriverService;
+import com.modsen.driverservice.service.impl.DriverService;
 
 import java.util.List;
 import java.util.Optional;

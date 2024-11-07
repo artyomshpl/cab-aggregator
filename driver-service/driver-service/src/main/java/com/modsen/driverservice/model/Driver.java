@@ -1,4 +1,4 @@
-package com.modsen.model;
+package com.modsen.driverservice.model;
 
 import lombok.Getter;
 import lombok.Setter;

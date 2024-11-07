@@ -1,10 +1,10 @@
-package com.modsen.controller;
+package com.modsen.driverservice.controller;
 
-import com.modsen.dto.DriverDTO;
-import com.modsen.exception.DriverNotFoundException;
-import com.modsen.mapper.DriverMapper;
-import com.modsen.model.Driver;
-import com.modsen.service.impl.DriverService;
+import com.modsen.driverservice.dto.DriverDTO;
+import com.modsen.driverservice.exception.DriverNotFoundException;
+import com.modsen.driverservice.mapper.DriverMapper;
+import com.modsen.driverservice.model.Driver;
+import com.modsen.driverservice.service.impl.DriverService;
 import lombok.AllArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 

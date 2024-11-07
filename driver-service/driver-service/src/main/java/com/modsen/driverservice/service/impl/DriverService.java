@@ -1,6 +1,6 @@
-package com.modsen.service.impl;
+package com.modsen.driverservice.service.impl;
 
-import com.modsen.model.Driver;
+import com.modsen.driverservice.model.Driver;
 
 import java.util.List;
 import java.util.Optional;

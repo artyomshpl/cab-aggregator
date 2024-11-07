@@ -1,4 +1,4 @@
-package com.modsen.dto;
+package com.modsen.driverservice.dto;
 
 import lombok.Getter;
 import lombok.Setter;

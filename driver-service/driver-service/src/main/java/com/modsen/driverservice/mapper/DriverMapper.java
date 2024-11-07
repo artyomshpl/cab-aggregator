@@ -1,7 +1,7 @@
-package com.modsen.mapper;
+package com.modsen.driverservice.mapper;
 
-import com.modsen.dto.DriverDTO;
-import com.modsen.model.Driver;
+import com.modsen.driverservice.model.Driver;
+import com.modsen.driverservice.dto.DriverDTO;
 import org.mapstruct.Mapper;
 
 @Mapper(componentModel = "spring")
