@@ -1,4 +1,4 @@
-package com.modsen.exception;
+package com.modsen.passengerservice.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
     public ResourceNotFoundException(String message) {
