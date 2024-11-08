@@ -38,8 +38,10 @@ public class DriverServiceImpl implements DriverService {
     @Transactional
     public DriverDTO saveDriver(DriverDTO driverDTO) {
         Driver driver = driverMapper.toEntity(driverDTO);
-        return driverMapper.toDTO(driverRepository.save(driver));
+        Driver savedDriver = driverRepository.save(driver);
+        return driverMapper.toDTO(savedDriver);
     }
+
 
     @Override
     @Transactional
