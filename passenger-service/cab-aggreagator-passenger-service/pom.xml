@@ -13,12 +13,16 @@
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <java.version>17</java.version>
+    <maven.compiler.source>17</maven.compiler.source>
+    <maven.compiler.target>17</maven.compiler.target>
     <spring-boot.version>2.5.3</spring-boot.version>
     <postgresql.version>42.2.22</postgresql.version>
     <lombok.version>1.18.20</lombok.version>
     <mapstruct.version>1.4.2.Final</mapstruct.version>
     <jaxb-api.version>2.3.1</jaxb-api.version>
     <junit.version>3.8.1</junit.version>
+    <mapstruct.version>1.4.2.Final</mapstruct.version>
+    <liquibase-core.version>4.3.5</liquibase-core.version>
   </properties>
 
   <dependencies>
@@ -35,6 +39,19 @@
     </dependency>
 
     <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct-processor</artifactId>
+      <version>${mapstruct.version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.mapstruct</groupId>
+      <artifactId>mapstruct</artifactId>
+      <version>${mapstruct.version}</version>
+    </dependency>
+
+    <dependency>
       <groupId>org.postgresql</groupId>
       <artifactId>postgresql</artifactId>
       <version>${postgresql.version}</version>
@@ -44,7 +61,13 @@
       <groupId>org.projectlombok</groupId>
       <artifactId>lombok</artifactId>
       <version>${lombok.version}</version>
-      <scope>provided</scope>
+      <scope>compile</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.liquibase</groupId>
+      <artifactId>liquibase-core</artifactId>
+      <version>${liquibase-core.version}</version>
     </dependency>
 
     <dependency>
