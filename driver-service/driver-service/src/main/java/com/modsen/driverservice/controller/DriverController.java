@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -16,24 +17,27 @@ public class DriverController {
     private final DriverService driverService;
 
     @GetMapping
-    public Page<DriverDTO> getAllDrivers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public ResponseEntity<Page<DriverDTO>> getAllDrivers(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
         Pageable pageable = PageRequest.of(page, size);
-        return driverService.getAllDrivers(pageable);
+        Page<DriverDTO> drivers = driverService.getAllDrivers(pageable);
+        return ResponseEntity.ok(drivers);
     }
 
     @GetMapping("/{id}")
-    public DriverDTO getDriverById(@PathVariable String id) {
-        return driverService.getDriverById(id);
+    public ResponseEntity<DriverDTO> getDriverById(@PathVariable String id) {
+        DriverDTO driverDTO = driverService.getDriverById(id);
+        return ResponseEntity.ok(driverDTO);
     }
 
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public DriverDTO saveDriver(@RequestBody DriverDTO driverDTO) {
-        return driverService.saveDriver(driverDTO);
+    public ResponseEntity<DriverDTO> saveDriver(@RequestBody DriverDTO driverDTO) {
+        DriverDTO savedDriverDTO = driverService.saveDriver(driverDTO);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedDriverDTO);
     }
 
     @DeleteMapping("/{id}")
-    public void deleteDriver(@PathVariable String id) {
+    public ResponseEntity<Void> deleteDriver(@PathVariable String id) {
         driverService.deleteDriver(id);
+        return ResponseEntity.noContent().build();
     }
 }
