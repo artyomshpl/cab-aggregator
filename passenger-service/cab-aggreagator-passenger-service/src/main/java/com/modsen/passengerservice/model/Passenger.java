@@ -1,5 +1,6 @@
 package com.modsen.passengerservice.model;
 
+
 import lombok.Getter;
 import lombok.Setter;
 
