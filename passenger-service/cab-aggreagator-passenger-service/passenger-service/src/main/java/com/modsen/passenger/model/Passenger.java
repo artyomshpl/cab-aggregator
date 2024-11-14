@@ -1,17 +1,15 @@
-package com.modsen.passengerservice.model;
-
+package com.modsen.passenger.model;
 
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
 
-
 @Entity
 @Getter
 @Setter
 @Table(name = "passenger")
-public class Passenger{
+public class Passenger {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

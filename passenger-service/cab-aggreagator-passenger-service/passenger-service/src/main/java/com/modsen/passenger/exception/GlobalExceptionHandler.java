@@ -1,4 +1,4 @@
-package com.modsen.passengerservice.exception;
+package com.modsen.passenger.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
