@@ -1,8 +1,11 @@
 package com.modsen.passenger.dto;
 
+import lombok.Builder;
+
 import java.util.List;
 
-public record PageResponseDto<T>(
+@Builder
+public record PageResponse<T>(
         List<T> content,
         int totalPages,
         long totalElements

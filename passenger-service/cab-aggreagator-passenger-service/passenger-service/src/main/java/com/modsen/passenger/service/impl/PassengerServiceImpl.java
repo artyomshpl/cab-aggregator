@@ -1,9 +1,9 @@
 package com.modsen.passenger.service.impl;
 
-import com.modsen.passenger.dto.PassengerRequestDto;
-import com.modsen.passenger.dto.PassengerResponseDto;
-import com.modsen.passenger.dto.PageResponseDto;
-import com.modsen.passenger.dto.PassengerListResponseDto;
+import com.modsen.passenger.dto.PassengerRequest;
+import com.modsen.passenger.dto.PassengerResponse;
+import com.modsen.passenger.dto.PageResponse;
+import com.modsen.passenger.dto.PassengerListResponse;
 import com.modsen.passenger.exception.ResourceNotFoundException;
 import com.modsen.passenger.mapper.PassengerMapper;
 import com.modsen.passenger.model.Passenger;
@@ -27,25 +27,29 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerMapper passengerMapper;
 
     @Override
-    public PassengerResponseDto savePassenger(PassengerRequestDto passengerRequestDto) {
-        Passenger passenger = passengerMapper.toEntity(passengerRequestDto);
+    public PassengerResponse savePassenger(PassengerRequest passengerRequest) {
+        Passenger passenger = passengerMapper.toEntity(passengerRequest);
         log.info("Saving passenger: {}", passenger);
         Passenger savedPassenger = passengerRepository.save(passenger);
         return passengerMapper.toDto(savedPassenger);
     }
 
     @Override
-    public PageResponseDto<PassengerResponseDto> getAllPassengers(int page, int size) {
+    public PageResponse<PassengerResponse> getAllPassengers(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<Passenger> passengerPage = passengerRepository.findAll(pageable);
-        List<PassengerResponseDto> passengerDtos = passengerPage.getContent().stream()
+        List<PassengerResponse> passengerDtos = passengerPage.getContent().stream()
                 .map(passengerMapper::toDto)
                 .collect(Collectors.toList());
-        return new PageResponseDto<>(passengerDtos, passengerPage.getTotalPages(), passengerPage.getTotalElements());
+        return PageResponse.<PassengerResponse>builder()
+                .content(passengerDtos)
+                .totalPages(passengerPage.getTotalPages())
+                .totalElements(passengerPage.getTotalElements())
+                .build();
     }
 
     @Override
-    public PassengerResponseDto getPassengerById(Long id) {
+    public PassengerResponse getPassengerById(Long id) {
         return passengerRepository.findById(id)
                 .map(passengerMapper::toDto)
                 .orElseThrow(() -> new ResourceNotFoundException("Passenger not found with id: " + id));
@@ -60,14 +64,12 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public PassengerListResponseDto getPassengersByName(String name) {
+    public PassengerListResponse getPassengersByName(String name) {
         List<Passenger> passengers = passengerRepository.findByName(name);
-        if (passengers.isEmpty()) {
-            return new PassengerListResponseDto(List.of());
-        }
-        List<PassengerResponseDto> passengerDtos = passengers.stream()
+        List<PassengerResponse> passengerDtos = passengers.stream()
                 .map(passengerMapper::toDto)
                 .collect(Collectors.toList());
-        return new PassengerListResponseDto(passengerDtos);
+        return new PassengerListResponse(passengerDtos);
     }
+
 }

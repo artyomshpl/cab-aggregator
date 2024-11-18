@@ -1,9 +1,9 @@
 package com.modsen.passenger.controller;
 
-import com.modsen.passenger.dto.PassengerRequestDto;
-import com.modsen.passenger.dto.PassengerResponseDto;
-import com.modsen.passenger.dto.PageResponseDto;
-import com.modsen.passenger.dto.PassengerListResponseDto;
+import com.modsen.passenger.dto.PassengerRequest;
+import com.modsen.passenger.dto.PassengerResponse;
+import com.modsen.passenger.dto.PageResponse;
+import com.modsen.passenger.dto.PassengerListResponse;
 import com.modsen.passenger.service.PassengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -17,35 +17,40 @@ public class PassengerController {
     private final PassengerService passengerService;
 
     @PostMapping
-    public ResponseEntity<PassengerResponseDto> savePassenger(@RequestBody PassengerRequestDto passengerRequestDto) {
-        PassengerResponseDto savedPassengerDto = passengerService.savePassenger(passengerRequestDto);
-        return ResponseEntity.status(HttpStatus.CREATED).body(savedPassengerDto);
+    public ResponseEntity<PassengerResponse> savePassenger(@RequestBody PassengerRequest passengerRequest) {
+        PassengerResponse savedPassengerDto = passengerService.savePassenger(passengerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(savedPassengerDto);
     }
 
     @GetMapping
-    public ResponseEntity<PageResponseDto<PassengerResponseDto>> getAllPassengers(
+    public ResponseEntity<PageResponse<PassengerResponse>> getAllPassengers(
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "10") int size) {
 
-        PageResponseDto<PassengerResponseDto> passengers = passengerService.getAllPassengers(page, size);
-        return ResponseEntity.ok(passengers);
+        PageResponse<PassengerResponse> passengers = passengerService.getAllPassengers(page, size);
+        return ResponseEntity.ok()
+                .body(passengers);
     }
 
     @GetMapping("/name")
-    public ResponseEntity<PassengerListResponseDto> getPassengersByName(@RequestParam("name") String name) {
-        PassengerListResponseDto passengers = passengerService.getPassengersByName(name);
-        return ResponseEntity.ok(passengers);
+    public ResponseEntity<PassengerListResponse> getPassengersByName(@RequestParam("name") String name) {
+        PassengerListResponse passengers = passengerService.getPassengersByName(name);
+        return ResponseEntity.ok()
+                .body(passengers);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<PassengerResponseDto> getPassengerById(@PathVariable Long id) {
-        PassengerResponseDto passengerDto = passengerService.getPassengerById(id);
-        return ResponseEntity.ok(passengerDto);
+    public ResponseEntity<PassengerResponse> getPassengerById(@PathVariable Long id) {
+        PassengerResponse passengerDto = passengerService.getPassengerById(id);
+        return ResponseEntity.ok()
+                .body(passengerDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePassenger(@PathVariable Long id) {
         passengerService.deletePassenger(id);
-        return ResponseEntity.noContent().build();
+        return ResponseEntity.noContent()
+                .build();
     }
 }

@@ -1,7 +1,6 @@
 package com.modsen.passenger.dto;
 
-public record PassengerResponseDto(
-        Long id,
+public record PassengerRequest(
         String name,
         String email
 ) {
