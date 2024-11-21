@@ -8,13 +8,16 @@ import javax.persistence.*;
 @Entity
 @Getter
 @Setter
-@Table(name = "passenger")
+@Table(name = "passengers")
 public class Passenger {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String name;
     private String email;
+    private String startPoint;
+    private String finalPoint;
+    private String status;
 
     @Override
     public String toString() {
@@ -22,6 +25,9 @@ public class Passenger {
                 "id=" + id +
                 ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
+                ", startPoint='" + startPoint + '\'' +
+                ", finalPoint='" + finalPoint + '\'' +
+                ", status='" + status + '\'' +
                 '}';
     }
 }
