@@ -12,6 +12,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 
 @Service
 @AllArgsConstructor
@@ -50,5 +53,27 @@ public class DriverServiceImpl implements DriverService {
             throw new DriverNotFoundException("Driver not found with id: " + id);
         }
         driverRepository.deleteById(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<DriverDTO> getFreeDrivers() {
+        return driverRepository.findByRideStatusAndActivityState("free", "active")
+                .stream()
+                .map(driverMapper::toDTO)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    @Transactional
+    public DriverDTO updateDriver(DriverDTO driverDTO) {
+        return driverRepository.findById(driverDTO.getId())
+                .map(existingDriver -> {
+                    Driver updatedDriver = driverMapper.toEntity(driverDTO);
+                    updatedDriver.setId(existingDriver.getId());
+                    Driver savedDriver = driverRepository.save(updatedDriver);
+                    return driverMapper.toDTO(savedDriver);
+                })
+                .orElseThrow(() -> new DriverNotFoundException("Driver not found with id: " + driverDTO.getId()));
     }
 }

@@ -14,4 +14,7 @@ public class Driver {
     private String name;
     private String licenseNumber;
     private String phoneNumber;
+    private String location;
+    private String rideStatus;
+    private String activityState;
 }
