@@ -53,4 +53,11 @@ public class PassengerController {
         return ResponseEntity.noContent()
                 .build();
     }
+
+    @PostMapping("/newRide")
+    public ResponseEntity<PassengerResponse> newRide(@RequestBody PassengerRequest passengerRequest) {
+        PassengerResponse passengerResponse = passengerService.newRide(passengerRequest);
+        return ResponseEntity.status(HttpStatus.CREATED)
+                .body(passengerResponse);
+    }
 }
