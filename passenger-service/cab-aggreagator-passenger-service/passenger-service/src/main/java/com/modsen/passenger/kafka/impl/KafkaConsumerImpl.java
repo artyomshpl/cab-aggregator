@@ -1,8 +1,10 @@
 package com.modsen.passenger.kafka.impl;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.modsen.passenger.dto.PassengerResponse;
+import com.modsen.passenger.exception.CustomJsonProcessingException;
 import com.modsen.passenger.kafka.KafkaConsumer;
 import com.modsen.passenger.service.PassengerService;
 import lombok.RequiredArgsConstructor;
@@ -18,11 +20,14 @@ public class KafkaConsumerImpl implements KafkaConsumer {
     @Override
     @KafkaListener(topics = "passenger-updates")
     public void listenPassengerUpdates(JsonNode message) {
+        PassengerResponse passenger;
         try {
-            PassengerResponse passenger = objectMapper.treeToValue(message, PassengerResponse.class);
-            passengerService.updatePassenger(passenger);
+            passenger = objectMapper.treeToValue(message, PassengerResponse.class);
+        } catch (JsonProcessingException e) {
+            throw new CustomJsonProcessingException("Failed to process JSON for passenger updates", e);
         } catch (Exception e) {
-            e.printStackTrace();
+            throw new RuntimeException("Failed to read JSON for passenger updates", e);
         }
+        passengerService.updatePassenger(passenger);
     }
 }
