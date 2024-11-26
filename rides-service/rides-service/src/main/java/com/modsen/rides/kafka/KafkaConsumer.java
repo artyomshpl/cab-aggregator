@@ -1,11 +1,8 @@
 package com.modsen.rides.kafka;
 
-import com.modsen.rides.dto.DriverDto;
-import com.modsen.rides.dto.PassengerDto;
-
-import java.util.List;
+import com.fasterxml.jackson.databind.JsonNode;
 
 public interface KafkaConsumer {
-    void listenSendFreeDrivers(List<DriverDto> message);
-    void listenNewPassenger(PassengerDto message);
+    void listenSendFreeDrivers(JsonNode message);
+    void listenNewPassenger(JsonNode message);
 }

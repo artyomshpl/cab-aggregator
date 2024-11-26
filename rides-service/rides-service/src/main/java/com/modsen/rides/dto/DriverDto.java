@@ -7,6 +7,6 @@ public record DriverDto(
         String phoneNumber,
         String location,
         String rideStatus,
-        Boolean activityState
+        String activityState
 ) {
 }

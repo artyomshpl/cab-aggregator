@@ -3,21 +3,33 @@ package com.modsen.rides.service.impl;
 import com.modsen.rides.dto.DistanceAndDurationDto;
 import com.modsen.rides.dto.DriverDto;
 import com.modsen.rides.dto.PassengerDto;
+import com.modsen.rides.dto.RideDto;
 import com.modsen.rides.kafka.KafkaProducer;
 import com.modsen.rides.service.DirectionService;
+import com.modsen.rides.service.RideCalculationService;
 import com.modsen.rides.service.RideService;
+import com.modsen.rides.util.DistanceAndDurationParser;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
 public class RideServiceImpl implements RideService {
     private final DirectionService directionService;
     private final KafkaProducer kafkaProducer;
+    private final RideCalculationService rideCalculationService;
+    private final DistanceAndDurationParser distanceAndDurationParser;
 
     private PassengerDto currentPassenger;
+    private DriverDto currentDriver;
+    private RideDto currentRide;
+
+    private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     @Override
     public void processNewPassenger(PassengerDto passenger) {
@@ -30,13 +42,42 @@ public class RideServiceImpl implements RideService {
         if (currentPassenger != null) {
             DriverDto closestDriver = findClosestDriver(currentPassenger, drivers);
             if (closestDriver != null) {
-                closestDriver = updateDriverStatus(closestDriver, "assigned");
+                currentDriver = updateDriverStatus(closestDriver, "assigned");
                 currentPassenger = updatePassengerStatus(currentPassenger, "assigned");
 
-                kafkaProducer.sendDriverUpdates(closestDriver);
+                kafkaProducer.sendDriverUpdates(currentDriver);
                 kafkaProducer.sendPassengerUpdates(currentPassenger);
+
+                currentRide = rideCalculationService.calculateRideDetails(currentPassenger, currentDriver);
+
+                scheduleStatusUpdates();
             }
         }
+    }
+
+    private void scheduleStatusUpdates() {
+        scheduler.schedule(() -> {
+            currentDriver = updateDriverStatus(currentDriver, "arrived");
+            currentPassenger = updatePassengerStatus(currentPassenger, "riding");
+
+            kafkaProducer.sendDriverUpdates(currentDriver);
+            kafkaProducer.sendPassengerUpdates(currentPassenger);
+
+            scheduler.schedule(() -> {
+                currentDriver = updateDriverStatus(currentDriver, "free");
+                currentPassenger = updatePassengerStatus(currentPassenger, "completed");
+
+                kafkaProducer.sendDriverUpdates(currentDriver);
+                kafkaProducer.sendPassengerUpdates(currentPassenger);
+
+                // Saving ride details to DB
+                saveRideDetails(currentRide);
+            }, currentRide.travelTime(), TimeUnit.SECONDS);
+        }, currentRide.waitTime(), TimeUnit.SECONDS);
+    }
+
+    private void saveRideDetails(RideDto ride) {
+        // Saving ride details to DB
     }
 
     private DriverDto findClosestDriver(PassengerDto passenger, List<DriverDto> drivers) {
@@ -51,7 +92,7 @@ public class RideServiceImpl implements RideService {
 
     private double calculateDistance(String startPoint, String location) {
         DistanceAndDurationDto distanceAndDuration = directionService.getDirections(startPoint, location);
-        return Double.parseDouble(distanceAndDuration.distance().replaceAll("[^\\d.]", ""));
+        return distanceAndDurationParser.parseDistanceToKilometers(distanceAndDuration.distance());
     }
 
     private DriverDto updateDriverStatus(DriverDto driver, String status) {
