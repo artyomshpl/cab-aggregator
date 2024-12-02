@@ -18,6 +18,11 @@ public class GlobalExceptionHandler {
         return ResponseEntity.badRequest().body(ex.getMessage());
     }
 
+    @ExceptionHandler(CustomJsonProcessingException.class)
+    public ResponseEntity<String> handleCustomJsonProcessingException(CustomJsonProcessingException ex) {
+        return ResponseEntity.badRequest().body("Error processing JSON: " + ex.getMessage());
+    }
+
     @ExceptionHandler(Exception.class)
     public ResponseEntity<String> handleGenericException(Exception ex) {
         return ResponseEntity.internalServerError().body("An unexpected error occurred: " + ex.getMessage());
