@@ -5,6 +5,7 @@ import com.modsen.passenger.dto.PassengerResponse;
 import com.modsen.passenger.dto.PageResponse;
 import com.modsen.passenger.dto.PassengerListResponse;
 import com.modsen.passenger.exception.ResourceNotFoundException;
+import com.modsen.passenger.kafka.KafkaProducer;
 import com.modsen.passenger.mapper.PassengerMapper;
 import com.modsen.passenger.model.Passenger;
 import com.modsen.passenger.repository.PassengerRepository;
@@ -25,12 +26,15 @@ import java.util.stream.Collectors;
 public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public PassengerResponse savePassenger(PassengerRequest passengerRequest) {
         Passenger passenger = passengerMapper.toEntity(passengerRequest);
         log.info("Saving passenger: {}", passenger);
         Passenger savedPassenger = passengerRepository.save(passenger);
+        PassengerResponse passengerResponse = passengerMapper.toDto(savedPassenger);
+        kafkaProducer.sendNewPassenger(passengerResponse);
         return passengerMapper.toDto(savedPassenger);
     }
 
@@ -72,4 +76,37 @@ public class PassengerServiceImpl implements PassengerService {
         return new PassengerListResponse(passengerDtos);
     }
 
+    @Override
+    public PassengerResponse newRide(PassengerRequest passengerRequest) {
+        Passenger passenger = passengerMapper.toEntity(passengerRequest);
+        Passenger existingPassenger = passengerRepository.findByNameAndEmail(passenger.getName(), passenger.getEmail())
+                .orElse(null);
+
+        if (existingPassenger != null) {
+            existingPassenger.setStartPoint(passenger.getStartPoint());
+            existingPassenger.setFinalPoint(passenger.getFinalPoint());
+            existingPassenger.setStatus(passenger.getStatus());
+            passenger = passengerRepository.save(existingPassenger);
+        } else {
+            passenger = passengerRepository.save(passenger);
+        }
+
+        PassengerResponse passengerResponse = passengerMapper.toDto(passenger);
+        kafkaProducer.sendNewPassenger(passengerResponse);
+        return passengerResponse;
+    }
+
+    @Override
+    public void updatePassenger(PassengerResponse passengerResponse) {
+        Passenger passenger = passengerRepository.findById(passengerResponse.id())
+                .orElseThrow(() -> new ResourceNotFoundException("Passenger not found with id: " + passengerResponse.id()));
+
+        passenger.setName(passengerResponse.name());
+        passenger.setEmail(passengerResponse.email());
+        passenger.setStartPoint(passengerResponse.startPoint());
+        passenger.setFinalPoint(passengerResponse.finalPoint());
+        passenger.setStatus(passengerResponse.status());
+
+        passengerRepository.save(passenger);
+    }
 }
