@@ -5,6 +5,9 @@ import com.modsen.rides.dto.DriverDto;
 import com.modsen.rides.dto.PassengerDto;
 import com.modsen.rides.dto.RideDto;
 import com.modsen.rides.kafka.KafkaProducer;
+import com.modsen.rides.mapper.RideMapper;
+import com.modsen.rides.model.Ride;
+import com.modsen.rides.repository.RideRepository;
 import com.modsen.rides.service.DirectionService;
 import com.modsen.rides.service.RideCalculationService;
 import com.modsen.rides.service.RideService;
@@ -24,6 +27,8 @@ public class RideServiceImpl implements RideService {
     private final KafkaProducer kafkaProducer;
     private final RideCalculationService rideCalculationService;
     private final DistanceAndDurationParser distanceAndDurationParser;
+    private final RideRepository rideRepository;
+    private final RideMapper rideMapper;
 
     private PassengerDto currentPassenger;
     private DriverDto currentDriver;
@@ -70,14 +75,14 @@ public class RideServiceImpl implements RideService {
                 kafkaProducer.sendDriverUpdates(currentDriver);
                 kafkaProducer.sendPassengerUpdates(currentPassenger);
 
-                // Saving ride details to DB
                 saveRideDetails(currentRide);
             }, currentRide.travelTime(), TimeUnit.SECONDS);
         }, currentRide.waitTime(), TimeUnit.SECONDS);
     }
 
     private void saveRideDetails(RideDto ride) {
-        // Saving ride details to DB
+        Ride rideEntity = rideMapper.toEntity(ride);
+        rideRepository.save(rideEntity);
     }
 
     private DriverDto findClosestDriver(PassengerDto passenger, List<DriverDto> drivers) {

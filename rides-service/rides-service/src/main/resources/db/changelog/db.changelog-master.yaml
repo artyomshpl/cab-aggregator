@@ -1,0 +1,50 @@
+databaseChangeLog:
+  - changeSet:
+      id: 1
+      author: user (generated)
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: rides
+      changes:
+        - createTable:
+            tableName: rides
+            columns:
+              - column:
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: passenger_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: driver_id
+                  type: varchar(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: wait_time
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: travel_time
+                  type: bigint
+                  constraints:
+                    nullable: false
+              - column:
+                  name: route_length
+                  type: double precision
+                  constraints:
+                    nullable: false
+              - column:
+                  name: price
+                  type: numeric(10, 2)
+                  constraints:
+                    nullable: false
