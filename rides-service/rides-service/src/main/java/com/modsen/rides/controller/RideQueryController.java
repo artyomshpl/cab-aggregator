@@ -12,8 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/v1/rides")
 @RequiredArgsConstructor
@@ -23,8 +21,8 @@ public class RideQueryController {
 
     @GetMapping("/latest")
     public ResponseEntity<RideDto> getLatestRide() {
-        Optional<RideDto> latestRide = rideQueryService.getLatestRide();
-        return latestRide.map(ResponseEntity::ok).orElseGet(() -> ResponseEntity.noContent().build());
+        RideDto latestRide = rideQueryService.getLatestRide();
+        return ResponseEntity.ok(latestRide);
     }
 
     @GetMapping

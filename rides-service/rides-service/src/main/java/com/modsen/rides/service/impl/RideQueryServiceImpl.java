@@ -11,7 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -22,9 +22,12 @@ public class RideQueryServiceImpl implements RideQueryService {
 
     @Override
     @Transactional
-    public Optional<RideDto> getLatestRide() {
+    public RideDto getLatestRide() {
         Ride latestRide = rideRepository.findTopByOrderByIdDesc();
-        return Optional.ofNullable(latestRide).map(rideMapper::toDto);
+        if (latestRide == null) {
+            throw new NoSuchElementException("Latest ride not found");
+        }
+        return rideMapper.toDto(latestRide);
     }
 
     @Override
