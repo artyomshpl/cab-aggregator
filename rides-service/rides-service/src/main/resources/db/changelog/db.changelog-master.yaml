@@ -48,3 +48,6 @@ databaseChangeLog:
                   type: numeric(10, 2)
                   constraints:
                     nullable: false
+              - column:
+                  name: rating
+                  type: int

@@ -13,6 +13,7 @@ public interface RideMapper {
     @Mapping(source = "travelTime", target = "travelTime")
     @Mapping(source = "routeLength", target = "routeLength")
     @Mapping(source = "price", target = "price")
+    @Mapping(source = "rating", target = "rating")
     Ride toEntity(RideDto rideDto);
 
     @Mapping(source = "id", target = "id")
@@ -22,5 +23,6 @@ public interface RideMapper {
     @Mapping(source = "travelTime", target = "travelTime")
     @Mapping(source = "routeLength", target = "routeLength")
     @Mapping(source = "price", target = "price")
+    @Mapping(source = "rating", target = "rating")
     RideDto toDto(Ride ride);
 }

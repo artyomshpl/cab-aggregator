@@ -38,7 +38,8 @@ public class RideCalculationServiceImpl implements RideCalculationService {
                 waitTime,
                 travelTime,
                 routeLength,
-                price
+                price,
+                null
         );
     }
 

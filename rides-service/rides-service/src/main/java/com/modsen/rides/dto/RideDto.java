@@ -9,6 +9,7 @@ public record RideDto(
         Long waitTime,
         Long travelTime,
         Double routeLength,
-        BigDecimal price
+        BigDecimal price,
+        Integer rating
 ) {
 }

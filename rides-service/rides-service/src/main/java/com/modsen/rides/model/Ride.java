@@ -20,4 +20,5 @@ public class Ride {
     private Long travelTime;
     private Double routeLength;
     private BigDecimal price;
+    private Integer rating;
 }
