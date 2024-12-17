@@ -23,4 +23,28 @@ public class KafkaConfig {
                 .replicas(1)
                 .build();
     }
+
+    @Bean
+    public NewTopic requestRidesTopic() {
+        return TopicBuilder.name("request-rides")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic updateRideRatingTopic() {
+        return TopicBuilder.name("update-ride-rating")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
+
+    @Bean
+    public NewTopic sendRidesTopic() {
+        return TopicBuilder.name("send-rides")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
 }
