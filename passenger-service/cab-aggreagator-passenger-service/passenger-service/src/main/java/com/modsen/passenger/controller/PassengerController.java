@@ -1,14 +1,14 @@
 package com.modsen.passenger.controller;
 
-import com.modsen.passenger.dto.PassengerRequest;
-import com.modsen.passenger.dto.PassengerResponse;
-import com.modsen.passenger.dto.PageResponse;
-import com.modsen.passenger.dto.PassengerListResponse;
+import com.modsen.passenger.dto.*;
 import com.modsen.passenger.service.PassengerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("api/v1/passengers")
@@ -59,5 +59,17 @@ public class PassengerController {
         PassengerResponse passengerResponse = passengerService.newRide(passengerRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(passengerResponse);
+    }
+
+    @PostMapping("/rides")
+    public CompletableFuture<ResponseEntity<List<RideDto>>> getRides(@RequestBody PassengerIdDto passengerIdDto) {
+        return passengerService.requestRides(passengerIdDto)
+                .thenApply(rides -> ResponseEntity.ok(rides));
+    }
+
+    @PostMapping("/rateRide")
+    public ResponseEntity<Void> rateRide(@RequestBody RideDto rideDto) {
+        passengerService.rateRide(rideDto);
+        return ResponseEntity.ok().build();
     }
 }
