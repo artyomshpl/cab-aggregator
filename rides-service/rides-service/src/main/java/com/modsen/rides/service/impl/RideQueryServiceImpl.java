@@ -11,7 +11,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -35,5 +37,12 @@ public class RideQueryServiceImpl implements RideQueryService {
     public Page<RideDto> getAllRides(Pageable pageable) {
         Page<Ride> rides = rideRepository.findAll(pageable);
         return rides.map(rideMapper::toDto);
+    }
+
+    @Override
+    @Transactional
+    public List<RideDto> getRidesByPassengerId(String passengerId) {
+        List<Ride> rides = rideRepository.findByPassengerId(passengerId);
+        return rides.stream().map(rideMapper::toDto).collect(Collectors.toList());
     }
 }
