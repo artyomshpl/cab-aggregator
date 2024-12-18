@@ -15,6 +15,6 @@ public interface PassengerService {
     void updatePassenger(PassengerResponse passengerResponse);
     void rateRide(RideDto rideDto);
     void receiveRides(List<RideDto> rides);
-    CompletableFuture<List<RideDto>> requestRides(PassengerIdDto passengerIdDto);
+    CompletableFuture<List<RideDto>> requestRides(String passengerIdDto);
 }
 

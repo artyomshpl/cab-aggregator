@@ -110,9 +110,9 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public CompletableFuture<List<RideDto>> requestRides(PassengerIdDto passengerIdDto) {
+    public CompletableFuture<List<RideDto>> requestRides(String passengerId) {
         ridesFuture = new CompletableFuture<>();
-        kafkaProducer.sendRequestRides(passengerIdDto);
+        kafkaProducer.sendRequestRides(passengerId);
         return ridesFuture;
     }
 

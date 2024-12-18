@@ -62,8 +62,8 @@ public class PassengerController {
     }
 
     @PostMapping("/rides")
-    public CompletableFuture<ResponseEntity<List<RideDto>>> getRides(@RequestBody PassengerIdDto passengerIdDto) {
-        return passengerService.requestRides(passengerIdDto)
+    public CompletableFuture<ResponseEntity<List<RideDto>>> getRides(@RequestBody String passengerId) {
+        return passengerService.requestRides(passengerId)
                 .thenApply(rides -> ResponseEntity.ok(rides));
     }
 

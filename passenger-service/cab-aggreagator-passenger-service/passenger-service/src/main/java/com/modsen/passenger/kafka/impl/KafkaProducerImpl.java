@@ -1,6 +1,5 @@
 package com.modsen.passenger.kafka.impl;
 
-import com.modsen.passenger.dto.PassengerIdDto;
 import com.modsen.passenger.dto.PassengerResponse;
 import com.modsen.passenger.dto.RideDto;
 import com.modsen.passenger.kafka.KafkaProducer;
@@ -19,8 +18,8 @@ public class KafkaProducerImpl implements KafkaProducer {
     }
 
     @Override
-    public void sendRequestRides(PassengerIdDto passengerIdDto) {
-        kafkaTemplate.send("request-rides", passengerIdDto);
+    public void sendRequestRides(String passengerId) {
+        kafkaTemplate.send("request-rides", passengerId);
     }
 
     @Override
