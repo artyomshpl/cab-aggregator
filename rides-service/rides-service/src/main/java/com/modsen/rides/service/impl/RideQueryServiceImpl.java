@@ -13,7 +13,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.NoSuchElementException;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +42,6 @@ public class RideQueryServiceImpl implements RideQueryService {
     @Transactional
     public List<RideDto> getRidesByPassengerId(String passengerId) {
         List<Ride> rides = rideRepository.findByPassengerId(passengerId);
-        return rides.stream().map(rideMapper::toDto).collect(Collectors.toList());
+        return rides.stream().map(rideMapper::toDto).toList();
     }
 }
