@@ -61,8 +61,6 @@
         @KafkaListener(topics = "request-rides", groupId = "rides-service-group")
         public void listenRequestRides(JsonNode message) {
             String passengerId;
-            ObjectMapper objectMapper = new ObjectMapper();
-
             try {
                 JsonNode jsonNode = objectMapper.readTree(message.asText());
                 JsonNode passengerIdNode = jsonNode.get("passengerId");
