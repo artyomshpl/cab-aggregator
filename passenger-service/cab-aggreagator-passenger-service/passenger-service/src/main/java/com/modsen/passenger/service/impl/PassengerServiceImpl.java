@@ -25,7 +25,7 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
     private final KafkaProducer kafkaProducer;
-    private CompletableFuture<List<RideDto>> ridesFuture = new CompletableFuture<>();
+    private CompletableFuture<List<RideDto>> ridesFuture;
 
     @Override
     public PassengerResponse savePassenger(PassengerRequest passengerRequest) {
