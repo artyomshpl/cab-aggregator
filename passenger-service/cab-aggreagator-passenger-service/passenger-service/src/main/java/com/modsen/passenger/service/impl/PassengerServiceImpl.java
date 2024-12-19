@@ -1,5 +1,6 @@
 package com.modsen.passenger.service.impl;
 
+import com.modsen.passenger.client.RideClient;
 import com.modsen.passenger.dto.*;
 import com.modsen.passenger.exception.ResourceNotFoundException;
 import com.modsen.passenger.kafka.KafkaProducer;
@@ -15,7 +16,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,7 +25,7 @@ public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
     private final KafkaProducer kafkaProducer;
-    private CompletableFuture<List<RideDto>> ridesFuture;
+    private final RideClient rideClient;
 
     @Override
     public PassengerResponse savePassenger(PassengerRequest passengerRequest) {
@@ -110,19 +110,12 @@ public class PassengerServiceImpl implements PassengerService {
     }
 
     @Override
-    public CompletableFuture<List<RideDto>> requestRides(String passengerId) {
-        ridesFuture = new CompletableFuture<>();
-        kafkaProducer.sendRequestRides(passengerId);
-        return ridesFuture;
+    public Page<RideDto> requestRides(String passengerId, int page, int size) {
+        return rideClient.getRidesByPassengerId(passengerId, page, size);
     }
 
     @Override
     public void rateRide(RideDto rideDto) {
         kafkaProducer.sendUpdateRideRating(rideDto);
-    }
-
-    @Override
-    public void receiveRides(List<RideDto> rides) {
-        ridesFuture.complete(rides);
     }
 }

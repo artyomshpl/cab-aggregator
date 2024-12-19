@@ -3,12 +3,10 @@ package com.modsen.passenger.controller;
 import com.modsen.passenger.dto.*;
 import com.modsen.passenger.service.PassengerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
 
 @RestController
 @RequestMapping("api/v1/passengers")
@@ -62,9 +60,11 @@ public class PassengerController {
     }
 
     @PostMapping("/rides")
-    public CompletableFuture<ResponseEntity<List<RideDto>>> getRides(@RequestBody String passengerId) {
-        return passengerService.requestRides(passengerId)
-                .thenApply(rides -> ResponseEntity.ok(rides));
+    public ResponseEntity<Page<RideDto>> getRides(@RequestParam String passengerId,
+                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
+        Page<RideDto> rides = passengerService.requestRides(passengerId, page, size);
+        return ResponseEntity.ok(rides);
     }
 
     @PostMapping("/rateRide")

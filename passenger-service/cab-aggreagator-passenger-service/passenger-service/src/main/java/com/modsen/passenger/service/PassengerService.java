@@ -1,9 +1,7 @@
 package com.modsen.passenger.service;
 
 import com.modsen.passenger.dto.*;
-
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
+import org.springframework.data.domain.Page;
 
 public interface PassengerService {
     PassengerResponse savePassenger(PassengerRequest passengerRequest);
@@ -14,7 +12,6 @@ public interface PassengerService {
     PassengerResponse newRide(PassengerRequest passengerRequest);
     void updatePassenger(PassengerResponse passengerResponse);
     void rateRide(RideDto rideDto);
-    void receiveRides(List<RideDto> rides);
-    CompletableFuture<List<RideDto>> requestRides(String passengerIdDto);
+    Page<RideDto> requestRides(String passengerId, int page, int size);
 }
 

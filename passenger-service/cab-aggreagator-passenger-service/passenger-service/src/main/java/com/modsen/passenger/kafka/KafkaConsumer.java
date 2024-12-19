@@ -4,5 +4,4 @@ import com.fasterxml.jackson.databind.JsonNode;
 
 public interface KafkaConsumer {
     void listenPassengerUpdates(JsonNode passenger);
-    void listenSendRides(JsonNode message);
 }

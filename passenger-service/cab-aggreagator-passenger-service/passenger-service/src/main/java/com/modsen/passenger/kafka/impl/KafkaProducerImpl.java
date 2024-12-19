@@ -18,11 +18,6 @@ public class KafkaProducerImpl implements KafkaProducer {
     }
 
     @Override
-    public void sendRequestRides(String passengerId) {
-        kafkaTemplate.send("request-rides", passengerId);
-    }
-
-    @Override
     public void sendUpdateRideRating(RideDto rideDto) {
         kafkaTemplate.send("update-ride-rating", rideDto);
     }
