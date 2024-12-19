@@ -11,7 +11,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 
 @Service
@@ -40,8 +39,8 @@ public class RideQueryServiceImpl implements RideQueryService {
 
     @Override
     @Transactional
-    public List<RideDto> getRidesByPassengerId(String passengerId) {
-        List<Ride> rides = rideRepository.findByPassengerId(passengerId);
-        return rides.stream().map(rideMapper::toDto).toList();
+    public Page<RideDto> getRidesByPassengerId(String passengerId, Pageable pageable) {
+        Page<Ride> rides = rideRepository.findByPassengerId(passengerId, pageable);
+        return rides.map(rideMapper::toDto);
     }
 }

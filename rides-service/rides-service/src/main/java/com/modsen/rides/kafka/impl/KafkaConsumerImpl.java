@@ -9,8 +9,6 @@
     import com.modsen.rides.dto.RideDto;
     import com.modsen.rides.exception.CustomJsonProcessingException;
     import com.modsen.rides.kafka.KafkaConsumer;
-    import com.modsen.rides.kafka.KafkaProducer;
-    import com.modsen.rides.service.RideQueryService;
     import com.modsen.rides.service.RideService;
     import lombok.RequiredArgsConstructor;
     import org.springframework.kafka.annotation.KafkaListener;
@@ -24,9 +22,6 @@
     public class KafkaConsumerImpl implements KafkaConsumer {
         private final RideService rideService;
         private final ObjectMapper objectMapper = new ObjectMapper();
-        private final RideQueryService rideQueryService;
-        private final KafkaProducer kafkaProducer;
-
 
         @Override
         @KafkaListener(topics = "send-free-drivers", groupId = "rides-service-group")
@@ -55,22 +50,6 @@
                 throw new CustomJsonProcessingException("Failed to process JSON for new passenger", e);
             }
             rideService.processNewPassenger(passengerDto);
-        }
-
-        @Override
-        @KafkaListener(topics = "request-rides", groupId = "rides-service-group")
-        public void listenRequestRides(JsonNode message) {
-            String passengerId;
-            try {
-                JsonNode jsonNode = objectMapper.readTree(message.asText());
-                JsonNode passengerIdNode = jsonNode.get("passengerId");
-                passengerId = passengerIdNode.asText();
-            } catch (Exception e) {
-                throw new CustomJsonProcessingException("Failed to process JSON for passenger ID", e);
-            }
-
-            List<RideDto> rides = rideQueryService.getRidesByPassengerId(passengerId);
-            kafkaProducer.sendRides(rides);
         }
 
         @Override
