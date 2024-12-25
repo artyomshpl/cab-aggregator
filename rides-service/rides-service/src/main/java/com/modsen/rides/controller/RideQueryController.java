@@ -33,4 +33,14 @@ public class RideQueryController {
         Page<RideDto> rides = rideQueryService.getAllRides(pageable);
         return ResponseEntity.ok(rides);
     }
+
+    @GetMapping("/passenger")
+    public ResponseEntity<Page<RideDto>> getRidesByPassengerId(
+            @RequestParam String passengerId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<RideDto> rides = rideQueryService.getRidesByPassengerId(passengerId, pageable);
+        return ResponseEntity.ok(rides);
+    }
 }

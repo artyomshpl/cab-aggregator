@@ -36,4 +36,11 @@ public class RideQueryServiceImpl implements RideQueryService {
         Page<Ride> rides = rideRepository.findAll(pageable);
         return rides.map(rideMapper::toDto);
     }
+
+    @Override
+    @Transactional
+    public Page<RideDto> getRidesByPassengerId(String passengerId, Pageable pageable) {
+        Page<Ride> rides = rideRepository.findByPassengerId(passengerId, pageable);
+        return rides.map(rideMapper::toDto);
+    }
 }

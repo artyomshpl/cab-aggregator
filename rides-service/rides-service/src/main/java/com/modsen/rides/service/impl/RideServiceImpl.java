@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -106,5 +107,13 @@ public class RideServiceImpl implements RideService {
 
     private PassengerDto updatePassengerStatus(PassengerDto passenger, String status) {
         return new PassengerDto(passenger.id(), passenger.name(), passenger.email(), passenger.startPoint(), passenger.finalPoint(), status);
+    }
+
+    @Override
+    public void updateRideRating(RideDto rideDto) {
+        Ride ride = rideRepository.findById(rideDto.id())
+                .orElseThrow(() -> new NoSuchElementException("Ride not found with id: " + rideDto.id()));
+        ride.setRating(rideDto.rating());
+        rideRepository.save(ride);
     }
 }

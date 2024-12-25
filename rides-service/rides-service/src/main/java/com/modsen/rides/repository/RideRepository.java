@@ -11,4 +11,5 @@ import org.springframework.stereotype.Repository;
 public interface RideRepository extends JpaRepository<Ride, Long> {
     Ride findTopByOrderByIdDesc();
     Page<Ride> findAll(Pageable pageable);
+    Page<Ride> findByPassengerId(String passengerId, Pageable pageable);
 }

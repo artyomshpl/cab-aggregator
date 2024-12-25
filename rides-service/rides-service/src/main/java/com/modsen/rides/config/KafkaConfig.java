@@ -47,4 +47,12 @@ public class KafkaConfig {
                 .replicas(1)
                 .build();
     }
+
+    @Bean
+    public NewTopic updateRideRatingTopic() {
+        return TopicBuilder.name("update-ride-rating")
+                .partitions(1)
+                .replicas(1)
+                .build();
+    }
 }
