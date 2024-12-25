@@ -30,4 +30,5 @@ public class KafkaConsumerImpl implements KafkaConsumer {
         }
         passengerService.updatePassenger(passenger);
     }
+
 }

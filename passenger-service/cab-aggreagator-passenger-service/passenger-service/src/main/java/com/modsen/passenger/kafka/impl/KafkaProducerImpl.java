@@ -1,6 +1,7 @@
 package com.modsen.passenger.kafka.impl;
 
 import com.modsen.passenger.dto.PassengerResponse;
+import com.modsen.passenger.dto.RideDto;
 import com.modsen.passenger.kafka.KafkaProducer;
 import lombok.RequiredArgsConstructor;
 import org.springframework.kafka.core.KafkaTemplate;
@@ -14,5 +15,10 @@ public class KafkaProducerImpl implements KafkaProducer {
     @Override
     public void sendNewPassenger(PassengerResponse passenger) {
         kafkaTemplate.send("new-passenger", passenger);
+    }
+
+    @Override
+    public void sendUpdateRideRating(RideDto rideDto) {
+        kafkaTemplate.send("update-ride-rating", rideDto);
     }
 }

@@ -1,16 +1,14 @@
 package com.modsen.passenger.service.impl;
 
-import com.modsen.passenger.dto.PassengerRequest;
-import com.modsen.passenger.dto.PassengerResponse;
-import com.modsen.passenger.dto.PageResponse;
-import com.modsen.passenger.dto.PassengerListResponse;
+import com.modsen.passenger.client.RideClient;
+import com.modsen.passenger.dto.*;
 import com.modsen.passenger.exception.ResourceNotFoundException;
 import com.modsen.passenger.kafka.KafkaProducer;
 import com.modsen.passenger.mapper.PassengerMapper;
 import com.modsen.passenger.model.Passenger;
 import com.modsen.passenger.repository.PassengerRepository;
 import com.modsen.passenger.service.PassengerService;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -21,12 +19,13 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 @Slf4j
 public class PassengerServiceImpl implements PassengerService {
     private final PassengerRepository passengerRepository;
     private final PassengerMapper passengerMapper;
     private final KafkaProducer kafkaProducer;
+    private final RideClient rideClient;
 
     @Override
     public PassengerResponse savePassenger(PassengerRequest passengerRequest) {
@@ -108,5 +107,15 @@ public class PassengerServiceImpl implements PassengerService {
         passenger.setStatus(passengerResponse.status());
 
         passengerRepository.save(passenger);
+    }
+
+    @Override
+    public Page<RideDto> requestRides(String passengerId, int page, int size) {
+        return rideClient.getRidesByPassengerId(passengerId, page, size);
+    }
+
+    @Override
+    public void rateRide(RideDto rideDto) {
+        kafkaProducer.sendUpdateRideRating(rideDto);
     }
 }

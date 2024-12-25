@@ -1,9 +1,7 @@
 package com.modsen.passenger.service;
 
-import com.modsen.passenger.dto.PassengerRequest;
-import com.modsen.passenger.dto.PassengerResponse;
-import com.modsen.passenger.dto.PageResponse;
-import com.modsen.passenger.dto.PassengerListResponse;
+import com.modsen.passenger.dto.*;
+import org.springframework.data.domain.Page;
 
 public interface PassengerService {
     PassengerResponse savePassenger(PassengerRequest passengerRequest);
@@ -13,5 +11,7 @@ public interface PassengerService {
     void deletePassenger(Long id);
     PassengerResponse newRide(PassengerRequest passengerRequest);
     void updatePassenger(PassengerResponse passengerResponse);
+    void rateRide(RideDto rideDto);
+    Page<RideDto> requestRides(String passengerId, int page, int size);
 }
 

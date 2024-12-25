@@ -1,11 +1,9 @@
 package com.modsen.passenger.controller;
 
-import com.modsen.passenger.dto.PassengerRequest;
-import com.modsen.passenger.dto.PassengerResponse;
-import com.modsen.passenger.dto.PageResponse;
-import com.modsen.passenger.dto.PassengerListResponse;
+import com.modsen.passenger.dto.*;
 import com.modsen.passenger.service.PassengerService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -59,5 +57,19 @@ public class PassengerController {
         PassengerResponse passengerResponse = passengerService.newRide(passengerRequest);
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(passengerResponse);
+    }
+
+    @PostMapping("/rides")
+    public ResponseEntity<Page<RideDto>> getRides(@RequestParam String passengerId,
+                                                  @RequestParam(defaultValue = "0") int page,
+                                                  @RequestParam(defaultValue = "10") int size) {
+        Page<RideDto> rides = passengerService.requestRides(passengerId, page, size);
+        return ResponseEntity.ok(rides);
+    }
+
+    @PostMapping("/rateRide")
+    public ResponseEntity<Void> rateRide(@RequestBody RideDto rideDto) {
+        passengerService.rateRide(rideDto);
+        return ResponseEntity.ok().build();
     }
 }
