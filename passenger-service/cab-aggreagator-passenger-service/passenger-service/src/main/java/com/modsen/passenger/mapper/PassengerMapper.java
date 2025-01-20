@@ -13,6 +13,7 @@ public interface PassengerMapper {
     @Mapping(source = "startPoint", target = "startPoint")
     @Mapping(source = "finalPoint", target = "finalPoint")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "rating", target = "rating")
     Passenger toEntity(PassengerRequest passengerRequest);
 
     @Mapping(source = "id", target = "id")
@@ -21,5 +22,6 @@ public interface PassengerMapper {
     @Mapping(source = "startPoint", target = "startPoint")
     @Mapping(source = "finalPoint", target = "finalPoint")
     @Mapping(source = "status", target = "status")
+    @Mapping(source = "rating", target = "rating")
     PassengerResponse toDto(Passenger passenger);
 }

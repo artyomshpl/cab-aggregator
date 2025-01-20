@@ -4,6 +4,7 @@ import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.math.BigDecimal;
 
 @Entity
 @Getter
@@ -18,6 +19,7 @@ public class Passenger {
     private String startPoint;
     private String finalPoint;
     private String status;
+    private BigDecimal rating;
 
     @Override
     public String toString() {
@@ -28,6 +30,7 @@ public class Passenger {
                 ", startPoint='" + startPoint + '\'' +
                 ", finalPoint='" + finalPoint + '\'' +
                 ", status='" + status + '\'' +
+                ", rating=" + rating +
                 '}';
     }
 }

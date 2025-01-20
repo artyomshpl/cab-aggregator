@@ -33,3 +33,7 @@ databaseChangeLog:
               - column:
                   name: status
                   type: varchar(255)
+              - column:
+                  name: rating
+                  type: numeric(3, 1)
+                  defaultValue: 0.0
