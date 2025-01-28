@@ -8,4 +8,5 @@ public interface RideQueryService {
     RideDto getLatestRide();
     Page<RideDto> getAllRides(Pageable pageable);
     Page<RideDto> getRidesByPassengerId(String passengerId, Pageable pageable);
+    Page<RideDto> getRidesByDriverId(String driverId, Pageable pageable);
 }

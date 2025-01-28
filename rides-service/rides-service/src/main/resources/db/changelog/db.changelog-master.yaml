@@ -51,3 +51,185 @@ databaseChangeLog:
               - column:
                   name: rating
                   type: int
+              - column:
+                  name: passenger_rating
+                  type: int
+              - column:
+                  name: paid
+                  type: boolean
+                  defaultValue: false
+                  constraints:
+                    nullable: false
+
+
+  - changeSet:
+      id: 2
+      author: user (generated)
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: driver_ratings
+      changes:
+        - createTable:
+            tableName: driver_ratings
+            columns:
+              - column:
+                  name: driver_id
+                  type: varchar(255)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: total_rating
+                  type: int
+                  defaultValue: 0
+              - column:
+                  name: rating_count
+                  type: int
+                  defaultValue: 0
+              - column:
+                  name: average_rating
+                  type: numeric(3, 1)
+                  defaultValue: 0.0
+
+  - changeSet:
+      id: 3
+      author: user (generated)
+      preConditions:
+        - onFail: MARK_RAN
+          not:
+            tableExists:
+              tableName: passenger_ratings
+      changes:
+        - createTable:
+            tableName: passenger_ratings
+            columns:
+              - column:
+                  name: passenger_id
+                  type: varchar(255)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: total_rating
+                  type: int
+                  defaultValue: 0
+              - column:
+                  name: rating_count
+                  type: int
+                  defaultValue: 0
+              - column:
+                  name: average_rating
+                  type: numeric(3, 1)
+                  defaultValue: 0.0
+
+  - changeSet:
+      id: 4
+      author: user (generated)
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            splitStatements: false
+            sql: |
+              DROP TRIGGER IF EXISTS update_driver_rating_trigger ON rides;
+              DROP TRIGGER IF EXISTS update_passenger_rating_trigger ON rides;
+
+  - changeSet:
+      id: 5
+      author: user (generated)
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            splitStatements: false
+            sql: |
+              CREATE OR REPLACE FUNCTION update_driver_rating()
+              RETURNS TRIGGER AS $$
+              BEGIN
+                  IF NEW.rating IS NOT NULL THEN
+                      IF OLD.rating IS NULL THEN
+                          UPDATE driver_ratings
+                          SET total_rating = total_rating + NEW.rating,
+                              rating_count = rating_count + 1,
+                              average_rating = ROUND((total_rating + NEW.rating)::numeric / (rating_count + 1), 1)
+                          WHERE driver_id = NEW.driver_id;
+
+                          IF NOT FOUND THEN
+                              INSERT INTO driver_ratings (driver_id, total_rating, rating_count, average_rating)
+                              VALUES (NEW.driver_id, NEW.rating, 1, ROUND(NEW.rating::numeric / 1, 1));
+                          END IF;
+                      ELSE
+                          UPDATE driver_ratings
+                          SET total_rating = total_rating - OLD.rating + NEW.rating,
+                              average_rating = ROUND((total_rating - OLD.rating + NEW.rating)::numeric / rating_count, 1)
+                          WHERE driver_id = NEW.driver_id;
+                      END IF;
+                  END IF;
+                  RETURN NEW;
+              END;
+              $$ LANGUAGE plpgsql;
+
+  - changeSet:
+      id: 6
+      author: user (generated)
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            splitStatements: false
+            sql: |
+              CREATE OR REPLACE FUNCTION update_passenger_rating()
+              RETURNS TRIGGER AS $$
+              BEGIN
+                  IF NEW.passenger_rating IS NOT NULL THEN
+                      IF OLD.passenger_rating IS NULL THEN
+                          UPDATE passenger_ratings
+                          SET total_rating = total_rating + NEW.passenger_rating,
+                              rating_count = rating_count + 1,
+                              average_rating = ROUND((total_rating + NEW.passenger_rating)::numeric / (rating_count + 1), 1)
+                          WHERE passenger_id = NEW.passenger_id;
+
+                          IF NOT FOUND THEN
+                              INSERT INTO passenger_ratings (passenger_id, total_rating, rating_count, average_rating)
+                              VALUES (NEW.passenger_id, NEW.passenger_rating, 1, ROUND(NEW.passenger_rating::numeric / 1, 1));
+                          END IF;
+                      ELSE
+                          UPDATE passenger_ratings
+                          SET total_rating = total_rating - OLD.passenger_rating + NEW.passenger_rating,
+                              average_rating = ROUND((total_rating - OLD.passenger_rating + NEW.passenger_rating)::numeric / rating_count, 1)
+                          WHERE passenger_id = NEW.passenger_id;
+                      END IF;
+                  END IF;
+                  RETURN NEW;
+              END;
+              $$ LANGUAGE plpgsql;
+
+  - changeSet:
+      id: 7
+      author: user (generated)
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            splitStatements: false
+            sql: |
+              CREATE TRIGGER update_driver_rating_trigger
+              AFTER INSERT OR UPDATE ON rides
+              FOR EACH ROW
+              EXECUTE FUNCTION update_driver_rating();
+
+  - changeSet:
+      id: 8
+      author: user (generated)
+      changes:
+        - sql:
+            dbms: postgresql
+            endDelimiter: ;
+            splitStatements: false
+            sql: |
+              CREATE TRIGGER update_passenger_rating_trigger
+              AFTER INSERT OR UPDATE ON rides
+              FOR EACH ROW
+              EXECUTE FUNCTION update_passenger_rating();
